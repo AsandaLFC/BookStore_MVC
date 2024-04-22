@@ -38,5 +38,34 @@ namespace BookStore.Controllers
             return View();
            
         }
+        public IActionResult Edit(int? ID)
+        {   
+            if(ID == null || ID == 0)
+            {
+                return NotFound();
+            }
+            Category categoryFromDb = _db.Categories.Find(ID);
+            if (categoryFromDb == null) 
+            {
+                return NotFound();
+            }
+            return View(categoryFromDb);
+        }
+        [HttpPost]
+        public IActionResult Edit(Category obj)
+        {
+            if (obj.Name == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("Name", "The DisplayOrder cannot exactly match the Name.");
+            }
+            if (ModelState.IsValid)
+            {
+                _db.Categories.Add(obj);
+                _db.SaveChanges();
+                return RedirectToAction("index");
+            }
+            return View();
+
+        }
     }
 }
